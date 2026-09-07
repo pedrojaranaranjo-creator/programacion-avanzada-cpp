@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // Ejercicio 3:
 
 // Parte A: un "sistema" de dos rectangulos
@@ -65,3 +66,6 @@ int main() {
 
     return 0;
 }
+
+
+
