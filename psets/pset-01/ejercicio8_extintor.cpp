@@ -23,9 +23,14 @@ private:
 
 public:
     ExtintorIncendios(double presionInicial) {
-        // TODO: si presionInicial es invalida (<= 0 o > 200), imprime el
-        // aviso y asigna presionPSI = 100.0. Si no, asigna presionPSI =
-        // presionInicial.
+        if (presionInicial <= 0 || presionInicial > 200) {
+            std::cout << "Aviso: presion invalida (" << presionInicial 
+                      << " PSI). Se asigna valor por defecto de 100.0 PSI." 
+                      << std::endl;
+            presionPSI = 100.0;
+        } else {
+            presionPSI = presionInicial;
+        }
     }
 
     double getPresionPSI() {

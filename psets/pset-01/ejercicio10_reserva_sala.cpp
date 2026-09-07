@@ -43,20 +43,33 @@ private:
 
 public:
     ReservaSala(int capacidadInicial) {
-        // TODO
+        if (capacidadInicial <= 0) {
+            std::cout << "Aviso: capacidad invalida (" << capacidadInicial
+                      << "). Se asigna valor por defecto de 10 personas." << std::endl;
+            capacidadPersonas = 10;
+        } else {
+            capacidadPersonas = capacidadInicial;
+        }
+
+        
+        horaInicio = 0.0;
+        horaFin = 0.0;
     }
 
     bool setHorario(double inicio, double fin) {
-        // TODO
+         if (inicio < fin) {
+            horaInicio = inicio;
+            horaFin = fin;
+            return true;
+        }
         return false;
     }
-
     int getCapacidadPersonas() {
         return capacidadPersonas;
     }
 
     ~ReservaSala() {
-        // TODO
+         std::cout << "Se libera la sala (capacidad " << capacidadPersonas << ")" << std::endl;
     }
 };
 
