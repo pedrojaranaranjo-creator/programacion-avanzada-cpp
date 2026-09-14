@@ -13,7 +13,7 @@ int notas [5] = {80, 90, 60, 50, 71};
 int *ptr_notas = notas;
 
 for (int i = 0; i < 5; i++){
-std::cout « "Valor de memoria desde puntero: " « *(ptr_notas + i) « std::endl;
+std::cout << "Valor de memoria desde puntero: " << *(ptr_notas + i) << std::endl;
 }
 
 return 0;
