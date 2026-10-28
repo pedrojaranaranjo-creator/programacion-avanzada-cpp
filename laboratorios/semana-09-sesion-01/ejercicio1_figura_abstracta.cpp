@@ -3,16 +3,10 @@
 
 class Figura {
     public:
-        // TODO (paso 1): ninguna Figura "generica" tiene un area ni un
-        // nombre que tenga sentido. Convierte estos dos metodos en
-        // funciones virtuales puras.
-        virtual double area() {
-            return 0.0;
-        }
+        
+        virtual double area() = 0;
 
-        virtual void imprimirNombre() {
-            std::cout << "Figura";
-        }
+        virtual void imprimirNombre() = 0;
 
         void describir() {
             imprimirNombre();
@@ -26,6 +20,7 @@ class Figura {
 class Circulo : public Figura {
     private:
         double radio;
+
     public:
         Circulo(double nuevoRadio) {
             radio = nuevoRadio;
@@ -44,6 +39,7 @@ class Rectangulo : public Figura {
     private:
         double base;
         double altura;
+
     public:
         Rectangulo(double nuevaBase, double nuevaAltura) {
             base = nuevaBase;
@@ -63,6 +59,7 @@ class Triangulo : public Figura {
     private:
         double base;
         double altura;
+
     public:
         Triangulo(double nuevaBase, double nuevaAltura) {
             base = nuevaBase;
@@ -73,16 +70,17 @@ class Triangulo : public Figura {
             std::cout << "Triangulo";
         }
 
-        // TODO (paso 3): despues del paso 1, compila y lee el error que
-        // aparece en main. Agrega lo que le falta a Triangulo.
+       
+        double area() override {
+            return (base * altura) / 2.0;
+        }
 };
 
 int main() {
-    // TODO (paso 2): despues del paso 1, quita el comentario de la
-    // siguiente linea, compila, lee el error y vuelve a comentarla.
-    // Figura generica;
+    
 
     std::unique_ptr<Figura> figuras[3];
+
     figuras[0] = std::make_unique<Circulo>(1.0);
     figuras[1] = std::make_unique<Rectangulo>(2.0, 3.0);
     figuras[2] = std::make_unique<Triangulo>(4.0, 3.0);
