@@ -2,60 +2,46 @@
 #include <mutex>
 #include <thread>
 
-// Ejercicio 2: la tarjeta prepago del comedor, cobrada desde dos cajas.
-//
-// La tarjeta de un grupo de estudiantes tiene 100000 centavos. Dos cajas
-// intentan cobrar 1 centavo, 60000 veces cada una, al mismo tiempo. Solo
-// alcanzan 100000 cobros: los demas tienen que rechazarse. Al final, la
-// tarjeta tiene que quedar en 0, nunca en negativo, y aceptados mas
-// rechazados tiene que dar 120000.
-//
-// Compilar:  g++ -std=c++20 -Wall -Wextra -g ejercicio2_tarjeta_comedor.cpp -o bin/ejercicio2
-// Ejecutar:  ./bin/ejercicio2
-//
-// Salida esperada (cuando la tarjeta es correcta):
-// Saldo final: 0
-// Cobros aceptados: 100000
-// Cobros rechazados: 20000
-
 class TarjetaDelComedor {
-    private:
-        int saldo;
-        int aceptados;
-        int rechazados;
-        // TODO 2: un std::mutex.
-    public:
-        TarjetaDelComedor(int inicial) {
-            saldo = inicial;
-            aceptados = 0;
-            rechazados = 0;
-        }
+private:
+    int saldo;
+    int aceptados;
+    int rechazados;
+    std::mutex mtx; 
 
-        // Cobra monto si alcanza el saldo, y cuenta el cobro como aceptado
-        // o rechazado.
-        void cobrar(int monto) {
-            // TODO 3: protege con el candado todo el metodo: la pregunta y el
-            // cambio. Si proteges solo la resta, dos cajas pueden ver
-            // "alcanza" a la vez por el ultimo centavo.
-            if (saldo >= monto) {
-                saldo = saldo - monto;
-                aceptados = aceptados + 1;
-            } else {
-                rechazados = rechazados + 1;
-            }
-        }
+public:
+    TarjetaDelComedor(int inicial) {
+        saldo = inicial;
+        aceptados = 0;
+        rechazados = 0;
+    }
 
-        int getSaldo() {
-            return saldo;
-        }
+    void cobrar(int monto) {
+        
+        std::lock_guard<std::mutex> lock(mtx);
 
-        int getAceptados() {
-            return aceptados;
+        if (saldo >= monto) {
+            saldo = saldo - monto;
+            aceptados = aceptados + 1;
+        } else {
+            rechazados = rechazados + 1;
         }
+    }
 
-        int getRechazados() {
-            return rechazados;
-        }
+    int getSaldo() {
+        std::lock_guard<std::mutex> lock(mtx);
+        return saldo;
+    }
+
+    int getAceptados() {
+        std::lock_guard<std::mutex> lock(mtx);
+        return aceptados;
+    }
+
+    int getRechazados() {
+        std::lock_guard<std::mutex> lock(mtx);
+        return rechazados;
+    }
 };
 
 void caja(TarjetaDelComedor* tarjeta, int intentos) {
@@ -67,12 +53,17 @@ void caja(TarjetaDelComedor* tarjeta, int intentos) {
 int main() {
     TarjetaDelComedor tarjeta(100000);
 
-    // TODO 1: dos std::thread que ejecuten caja(&tarjeta, 60000), y join().
-    caja(&tarjeta, 60000);
-    caja(&tarjeta, 60000);
+    
+    std::thread caja1(caja, &tarjeta, 60000);
+    std::thread caja2(caja, &tarjeta, 60000);
+
+    
+    caja1.join();
+    caja2.join();
 
     std::cout << "Saldo final: " << tarjeta.getSaldo() << std::endl;
     std::cout << "Cobros aceptados: " << tarjeta.getAceptados() << std::endl;
     std::cout << "Cobros rechazados: " << tarjeta.getRechazados() << std::endl;
+
     return 0;
 }
