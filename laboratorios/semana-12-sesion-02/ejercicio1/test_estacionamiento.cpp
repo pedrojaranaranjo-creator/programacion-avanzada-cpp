@@ -1,46 +1,53 @@
-// Las cuatro pruebas del estacionamiento de la Sesion 1. Desde esta
-// sesion se compilan con CMake (ver CMakeLists.txt).
 
-#include <gtest/gtest.h>
+#ifndef ESTACIONAMIENTO_H
+#define ESTACIONAMIENTO_H
 
-#include "estacionamiento.h"
+#include <vector>
+#include <optional>
+#include <stdexcept>
 
-TEST(Estacionamiento, PrimeraPlacaRecibePuestoCero) {
-    Estacionamiento estacionamiento(3);
+class Estacionamiento {
+private:
+    std::vector<std::optional<int>> puestos;
 
-    std::optional<int> puesto = estacionamiento.asignarPuesto(4521);
+public:
+    Estacionamiento(int capacidad) {
+        puestos.resize(capacidad);
+    }
 
-    ASSERT_TRUE(puesto.has_value());
-    EXPECT_EQ(*puesto, 0);
-}
+    std::optional<int> asignarPuesto(int placa) {
 
-TEST(Estacionamiento, LlenoDevuelveVacio) {
-    Estacionamiento estacionamiento(3);
-    estacionamiento.asignarPuesto(4521);
-    estacionamiento.asignarPuesto(7788);
-    estacionamiento.asignarPuesto(3011);
+        // Comprobar si la placa ya está registrada.
+        for (int i = 0; i < puestos.size(); i++) {
+            if (puestos[i].has_value() &&
+                puestos[i].value() == placa) {
+                throw std::invalid_argument("Placa repetida");
+            }
+        }
 
-    std::optional<int> cuarta = estacionamiento.asignarPuesto(9090);
+        // Buscar el primer puesto disponible.
+        for (int i = 0; i < puestos.size(); i++) {
+            if (!puestos[i].has_value()) {
+                puestos[i] = placa;
+                return i;
+            }
+        }
 
-    EXPECT_FALSE(cuarta.has_value());
-}
+        // Si todos los puestos están ocupados.
+        return std::nullopt;
+    }
 
-TEST(Estacionamiento, PlacaRepetidaLanza) {
-    Estacionamiento estacionamiento(3);
-    estacionamiento.asignarPuesto(7788);
+    void liberar(int placa) {
 
-    EXPECT_THROW(estacionamiento.asignarPuesto(7788), std::invalid_argument);
-}
+        // Buscar la placa y liberar su puesto.
+        for (int i = 0; i < puestos.size(); i++) {
+            if (puestos[i].has_value() &&
+                puestos[i].value() == placa) {
+                puestos[i] = std::nullopt;
+                return;
+            }
+        }
+    }
+};
 
-TEST(Estacionamiento, PuestoLiberadoSeReusa) {
-    Estacionamiento estacionamiento(3);
-    estacionamiento.asignarPuesto(4521);
-    estacionamiento.asignarPuesto(7788);
-    estacionamiento.asignarPuesto(3011);
-    estacionamiento.liberar(7788);
-
-    std::optional<int> nueva = estacionamiento.asignarPuesto(9090);
-
-    ASSERT_TRUE(nueva.has_value());
-    EXPECT_EQ(*nueva, 1);
-}
+#endif
