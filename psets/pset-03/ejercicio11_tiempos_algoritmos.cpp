@@ -1,21 +1,3 @@
-// Ejercicio 11: tiempos de respuesta (algoritmos de la STL)
-//
-// Completa las funciones marcadas con TODO usando el algoritmo que indica
-// cada una, no un ciclo escrito a mano. No cambies las firmas ni el main().
-//
-// Compilar: g++ -std=c++20 -Wall -Wextra -g -o ejercicio11 ejercicio11_tiempos_algoritmos.cpp
-// Ejecutar: ./ejercicio11
-//
-// Salida esperada:
-// Hay un tiempo de 90: 1
-// Posicion del primer 90: 3
-// Hay un tiempo de 55: 0
-// Veces que aparece 40: 2
-// Tiempo maximo: 210
-// Respuestas lentas: 4
-// Total: 870
-// Ordenados: 15 40 40 65 90 120 125 165 210
-
 #include <algorithm>
 #include <iostream>
 #include <numeric>
@@ -26,39 +8,48 @@ bool esLenta(int milisegundos) {
 }
 
 bool contiene(std::vector<int> tiempos, int valor) {
-    // TODO: usa std::find y compara el resultado con end().
-    return false;
+    // Busca el valor y comprueba si fue encontrado.
+    return std::find(tiempos.begin(), tiempos.end(), valor) != tiempos.end();
 }
 
 int posicionDe(std::vector<int> tiempos, int valor) {
-    // TODO: usa std::find; si no esta, devuelve -1; si esta, la posicion
-    // (resultado - tiempos.begin()).
-    return -1;
+    // Busca el valor.
+    auto resultado = std::find(tiempos.begin(), tiempos.end(), valor);
+
+    // Si no existe, devuelve -1.
+    if (resultado == tiempos.end()) {
+        return -1;
+    }
+
+    // Calcula la posicion.
+    return resultado - tiempos.begin();
 }
 
 int vecesQueAparece(std::vector<int> tiempos, int valor) {
-    // TODO: usa std::count.
-    return 0;
+    return std::count(tiempos.begin(), tiempos.end(), valor);
 }
 
 int maximo(std::vector<int> tiempos) {
-    // TODO: usa std::max_element. Si el vector esta vacio, devuelve 0.
-    return 0;
+    // Comprueba si el vector esta vacio.
+    if (tiempos.empty()) {
+        return 0;
+    }
+
+    auto resultado = std::max_element(tiempos.begin(), tiempos.end());
+
+    return *resultado;
 }
 
 int cuantasLentas(std::vector<int> tiempos) {
-    // TODO: usa std::count_if con la funcion esLenta, pasada por su nombre.
-    return 0;
+    return std::count_if(tiempos.begin(), tiempos.end(), esLenta);
 }
 
 int total(std::vector<int> tiempos) {
-    // TODO: usa std::accumulate, empezando en 0.
-    return 0;
+    return std::accumulate(tiempos.begin(), tiempos.end(), 0);
 }
 
 std::vector<int> ordenados(std::vector<int> tiempos) {
-    // TODO: ordena la copia recibida con std::sort, de menor a mayor, y
-    // devuelvela.
+    std::sort(tiempos.begin(), tiempos.end());
     return tiempos;
 }
 
@@ -81,3 +72,4 @@ int main() {
     std::cout << std::endl;
     return 0;
 }
+
